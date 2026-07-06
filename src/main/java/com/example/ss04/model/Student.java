@@ -1,5 +1,6 @@
 package com.example.ss04.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -32,5 +33,6 @@ public class Student {
     private String email;
 
     @OneToMany(mappedBy = "student")
+    @JsonIgnore
     private List<StudentEnrollment> enrollments;
 }

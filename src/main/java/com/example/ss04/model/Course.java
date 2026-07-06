@@ -1,5 +1,6 @@
 package com.example.ss04.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -40,5 +41,6 @@ public class Course {
     private Instructor instructor;
 
     @OneToMany(mappedBy = "course")
+    @JsonIgnore
     private List<StudentEnrollment> enrollments;
 }
