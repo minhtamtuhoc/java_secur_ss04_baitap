@@ -14,23 +14,23 @@ import lombok.Setter;
 import java.util.List;
 
 @Entity
-@Table(name = "instructors")
+@Table(name = "students")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Instructor {
+public class Student {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 100, nullable = false)
+    @Column(nullable = false)
     private String name;
 
     @Column(nullable = false)
     private String email;
 
-    @OneToMany(mappedBy = "instructor")
-    private List<Course> courses;
+    @OneToMany(mappedBy = "student")
+    private List<StudentEnrollment> enrollments;
 }

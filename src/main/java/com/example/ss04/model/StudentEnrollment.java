@@ -1,36 +1,34 @@
 package com.example.ss04.model;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import java.util.List;
 
 @Entity
-@Table(name = "instructors")
+@Table(name = "student_enrollments")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Instructor {
+public class StudentEnrollment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 100, nullable = false)
-    private String name;
+    @ManyToOne
+    @JoinColumn(name = "student_id", nullable = false)
+    private Student student;
 
-    @Column(nullable = false)
-    private String email;
-
-    @OneToMany(mappedBy = "instructor")
-    private List<Course> courses;
+    @ManyToOne
+    @JoinColumn(name = "course_id", nullable = false)
+    private Course course;
 }
