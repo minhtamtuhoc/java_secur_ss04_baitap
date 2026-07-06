@@ -1,9 +1,11 @@
 package com.example.ss04.controller;
 
+import com.example.ss04.dto.ApiResponse;
 import com.example.ss04.dto.InstructorCreateRequest;
 import com.example.ss04.model.Instructor;
 import com.example.ss04.service.InstructorService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/instructors")
+@RequestMapping("/instructors")
 public class InstructorController {
 
     private final InstructorService instructorService;
@@ -25,17 +27,35 @@ public class InstructorController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Instructor> getInstructorById(@PathVariable Long id) {
-        return ResponseEntity.ok(instructorService.findInstructorById(id));
+    public ResponseEntity<ApiResponse<Instructor>> getInstructorById(@PathVariable Long id) {
+        Instructor instructor = instructorService.findInstructorById(id);
+        ApiResponse<Instructor> response = ApiResponse.<Instructor>builder()
+                .status(HttpStatus.OK.value())
+                .message("Get instructor successfully")
+                .data(instructor)
+                .build();
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping
-    public ResponseEntity<List<Instructor>> getAllInstructors() {
-        return ResponseEntity.ok(instructorService.findAllInstructors());
+    public ResponseEntity<ApiResponse<List<Instructor>>> getAllInstructors() {
+        List<Instructor> instructors = instructorService.findAllInstructors();
+        ApiResponse<List<Instructor>> response = ApiResponse.<List<Instructor>>builder()
+                .status(HttpStatus.OK.value())
+                .message("Get all instructors successfully")
+                .data(instructors)
+                .build();
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping
-    public ResponseEntity<Instructor> createInstructor(@RequestBody InstructorCreateRequest req) {
-        return ResponseEntity.ok(instructorService.createInstructor(req));
+    public ResponseEntity<ApiResponse<Void>> createInstructor(@RequestBody InstructorCreateRequest req) {
+        instructorService.createInstructor(req);
+        ApiResponse<Void> response = ApiResponse.<Void>builder()
+                .status(HttpStatus.CREATED.value())
+                .message("Create instructor successfully")
+                .data(null)
+                .build();
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 }
