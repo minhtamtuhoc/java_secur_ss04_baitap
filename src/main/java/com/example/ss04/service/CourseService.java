@@ -1,6 +1,8 @@
 package com.example.ss04.service;
 
 import com.example.ss04.dto.CourseCreateRequest;
+import com.example.ss04.dto.CourseInstructorResponse;
+import com.example.ss04.dto.CourseResponse;
 import com.example.ss04.dto.CourseUpdateRequest;
 import com.example.ss04.model.Course;
 import com.example.ss04.model.Instructor;
@@ -9,6 +11,8 @@ import com.example.ss04.repository.InstructorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CourseService {
@@ -25,6 +29,17 @@ public class CourseService {
     public Course findCourseById(Long id) {
         return courseRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Course not found with id: " + id));
+    }
+
+    public List<CourseResponse> findAllCourses() {
+        return courseRepository.findAll().stream()
+                .map(this::convertToCourseResponse)
+                .collect(Collectors.toList());
+    }
+
+    public CourseResponse getCourseResponseById(Long id) {
+        Course course = findCourseById(id);
+        return convertToCourseResponse(course);
     }
 
     public Course createCourse(CourseCreateRequest req) {
@@ -52,5 +67,22 @@ public class CourseService {
         course.setInstructor(instructor);
 
         return courseRepository.save(course);
+    }
+
+    private CourseResponse convertToCourseResponse(Course course) {
+        CourseInstructorResponse instructorResponse = null;
+        if (course.getInstructor() != null) {
+            instructorResponse = CourseInstructorResponse.builder()
+                    .id(course.getInstructor().getId())
+                    .name(course.getInstructor().getName())
+                    .build();
+        }
+
+        return CourseResponse.builder()
+                .id(course.getId())
+                .title(course.getTitle())
+                .status(course.getStatus())
+                .instructor(instructorResponse)
+                .build();
     }
 }

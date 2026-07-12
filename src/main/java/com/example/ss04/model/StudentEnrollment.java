@@ -1,5 +1,6 @@
 package com.example.ss04.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -11,6 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "student_enrollments")
@@ -31,4 +33,7 @@ public class StudentEnrollment {
     @ManyToOne
     @JoinColumn(name = "course_id", nullable = false)
     private Course course;
+
+    @Column(name = "enroll_at", nullable = false)
+    private LocalDateTime enrollAt;
 }
