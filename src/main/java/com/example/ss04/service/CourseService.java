@@ -9,6 +9,10 @@ import com.example.ss04.model.Instructor;
 import com.example.ss04.repository.CourseRepository;
 import com.example.ss04.repository.InstructorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +44,19 @@ public class CourseService {
     public CourseResponse getCourseResponseById(Long id) {
         Course course = findCourseById(id);
         return convertToCourseResponse(course);
+    }
+
+    public Page<CourseResponse> getPagedCourses(int page, int size, String sortBy, Sort.Direction direction) {
+        if (page < 0) {
+            page = 0;
+        }
+
+        String sortField = (sortBy == null || sortBy.trim().isEmpty()) ? "id" : sortBy;
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortField));
+
+        Page<Course> coursePage = courseRepository.findAll(pageable);
+        return coursePage.map(this::convertToCourseResponse);
     }
 
     public Course createCourse(CourseCreateRequest req) {

@@ -10,6 +10,8 @@ import com.example.ss04.dto.StudentResponse;
 import com.example.ss04.service.CourseService;
 import com.example.ss04.service.StudentEnrollmentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -37,12 +39,17 @@ public class CourseController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<CourseResponse>>> getAllCourses() {
-        List<CourseResponse> courses = courseService.findAllCourses();
-        ApiResponse<List<CourseResponse>> response = ApiResponse.<List<CourseResponse>>builder()
+    public ResponseEntity<ApiResponse<Page<CourseResponse>>> getAllCourses(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String sortBy,
+            @RequestParam(defaultValue = "DESC") Sort.Direction direction) {
+
+        Page<CourseResponse> pagedCourses = courseService.getPagedCourses(page, size, sortBy, direction);
+        ApiResponse<Page<CourseResponse>> response = ApiResponse.<Page<CourseResponse>>builder()
                 .status(HttpStatus.OK.value())
-                .message("Get all courses successfully")
-                .data(courses)
+                .message("Get paged courses successfully")
+                .data(pagedCourses)
                 .build();
         return ResponseEntity.ok(response);
     }
