@@ -3,6 +3,7 @@ package com.example.ss04.service;
 import com.example.ss04.dto.CourseCreateRequest;
 import com.example.ss04.dto.CourseInstructorResponse;
 import com.example.ss04.dto.CourseResponse;
+import com.example.ss04.dto.CourseResponseV2;
 import com.example.ss04.dto.CourseUpdateRequest;
 import com.example.ss04.dto.PageResponse;
 import com.example.ss04.model.Course;
@@ -70,7 +71,7 @@ public class CourseService {
                 .build();
     }
 
-    public PageResponse<CourseResponse> getPagedCoursesByStatus(int page, int size, String sortBy, Sort.Direction direction, CourseStatus status) {
+    public PageResponse<CourseResponseV2> getPagedCoursesByStatus(int page, int size, String sortBy, Sort.Direction direction, CourseStatus status) {
         if (page < 0) {
             page = 0;
         }
@@ -79,16 +80,15 @@ public class CourseService {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortField));
 
-        Page<Course> coursePage = courseRepository.findAllByStatus(status, pageable);
-        Page<CourseResponse> mappedPage = coursePage.map(this::convertToCourseResponse);
+        Page<CourseResponseV2> coursePage = courseRepository.findAllProjectedByStatus(status, pageable);
 
-        return PageResponse.<CourseResponse>builder()
-                .items(mappedPage.getContent())
-                .page(mappedPage.getNumber())
-                .size(mappedPage.getSize())
-                .totalItems(mappedPage.getTotalElements())
-                .totalPages(mappedPage.getTotalPages())
-                .isLast(mappedPage.isLast())
+        return PageResponse.<CourseResponseV2>builder()
+                .items(coursePage.getContent())
+                .page(coursePage.getNumber())
+                .size(coursePage.getSize())
+                .totalItems(coursePage.getTotalElements())
+                .totalPages(coursePage.getTotalPages())
+                .isLast(coursePage.isLast())
                 .build();
     }
 

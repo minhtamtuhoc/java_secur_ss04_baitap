@@ -5,6 +5,7 @@ import com.example.ss04.dto.CourseCreateRequest;
 import com.example.ss04.dto.CourseEnrollmentRequest;
 import com.example.ss04.dto.CourseEnrollmentResponse;
 import com.example.ss04.dto.CourseResponse;
+import com.example.ss04.dto.CourseResponseV2;
 import com.example.ss04.dto.CourseUpdateRequest;
 import com.example.ss04.dto.PageResponse;
 import com.example.ss04.dto.StudentResponse;
@@ -41,15 +42,15 @@ public class CourseController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<PageResponse<CourseResponse>>> getAllCourses(
+    public ResponseEntity<ApiResponse<PageResponse<CourseResponseV2>>> getAllCourses(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String sortBy,
             @RequestParam(defaultValue = "DESC") Sort.Direction direction,
             @RequestParam(defaultValue = "ACTIVE") CourseStatus status) {
 
-        PageResponse<CourseResponse> pagedCourses = courseService.getPagedCoursesByStatus(page, size, sortBy, direction, status);
-        ApiResponse<PageResponse<CourseResponse>> response = ApiResponse.<PageResponse<CourseResponse>>builder()
+        PageResponse<CourseResponseV2> pagedCourses = courseService.getPagedCoursesByStatus(page, size, sortBy, direction, status);
+        ApiResponse<PageResponse<CourseResponseV2>> response = ApiResponse.<PageResponse<CourseResponseV2>>builder()
                 .status(HttpStatus.OK.value())
                 .message("Get paged courses successfully")
                 .data(pagedCourses)
