@@ -6,6 +6,7 @@ import com.example.ss04.dto.CourseResponse;
 import com.example.ss04.dto.CourseUpdateRequest;
 import com.example.ss04.dto.PageResponse;
 import com.example.ss04.model.Course;
+import com.example.ss04.model.CourseStatus;
 import com.example.ss04.model.Instructor;
 import com.example.ss04.repository.CourseRepository;
 import com.example.ss04.repository.InstructorRepository;
@@ -57,6 +58,28 @@ public class CourseService {
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortField));
 
         Page<Course> coursePage = courseRepository.findAll(pageable);
+        Page<CourseResponse> mappedPage = coursePage.map(this::convertToCourseResponse);
+
+        return PageResponse.<CourseResponse>builder()
+                .items(mappedPage.getContent())
+                .page(mappedPage.getNumber())
+                .size(mappedPage.getSize())
+                .totalItems(mappedPage.getTotalElements())
+                .totalPages(mappedPage.getTotalPages())
+                .isLast(mappedPage.isLast())
+                .build();
+    }
+
+    public PageResponse<CourseResponse> getPagedCoursesByStatus(int page, int size, String sortBy, Sort.Direction direction, CourseStatus status) {
+        if (page < 0) {
+            page = 0;
+        }
+
+        String sortField = (sortBy == null || sortBy.trim().isEmpty()) ? "id" : sortBy;
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortField));
+
+        Page<Course> coursePage = courseRepository.findAllByStatus(status, pageable);
         Page<CourseResponse> mappedPage = coursePage.map(this::convertToCourseResponse);
 
         return PageResponse.<CourseResponse>builder()

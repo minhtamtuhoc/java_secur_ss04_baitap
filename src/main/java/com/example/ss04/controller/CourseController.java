@@ -8,6 +8,7 @@ import com.example.ss04.dto.CourseResponse;
 import com.example.ss04.dto.CourseUpdateRequest;
 import com.example.ss04.dto.PageResponse;
 import com.example.ss04.dto.StudentResponse;
+import com.example.ss04.model.CourseStatus;
 import com.example.ss04.service.CourseService;
 import com.example.ss04.service.StudentEnrollmentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,9 +45,10 @@ public class CourseController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String sortBy,
-            @RequestParam(defaultValue = "DESC") Sort.Direction direction) {
+            @RequestParam(defaultValue = "DESC") Sort.Direction direction,
+            @RequestParam(defaultValue = "ACTIVE") CourseStatus status) {
 
-        PageResponse<CourseResponse> pagedCourses = courseService.getPagedCourses(page, size, sortBy, direction);
+        PageResponse<CourseResponse> pagedCourses = courseService.getPagedCoursesByStatus(page, size, sortBy, direction, status);
         ApiResponse<PageResponse<CourseResponse>> response = ApiResponse.<PageResponse<CourseResponse>>builder()
                 .status(HttpStatus.OK.value())
                 .message("Get paged courses successfully")
