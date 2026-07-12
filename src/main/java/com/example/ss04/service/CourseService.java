@@ -4,6 +4,7 @@ import com.example.ss04.dto.CourseCreateRequest;
 import com.example.ss04.dto.CourseInstructorResponse;
 import com.example.ss04.dto.CourseResponse;
 import com.example.ss04.dto.CourseUpdateRequest;
+import com.example.ss04.dto.PageResponse;
 import com.example.ss04.model.Course;
 import com.example.ss04.model.Instructor;
 import com.example.ss04.repository.CourseRepository;
@@ -46,7 +47,7 @@ public class CourseService {
         return convertToCourseResponse(course);
     }
 
-    public Page<CourseResponse> getPagedCourses(int page, int size, String sortBy, Sort.Direction direction) {
+    public PageResponse<CourseResponse> getPagedCourses(int page, int size, String sortBy, Sort.Direction direction) {
         if (page < 0) {
             page = 0;
         }
@@ -56,7 +57,16 @@ public class CourseService {
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortField));
 
         Page<Course> coursePage = courseRepository.findAll(pageable);
-        return coursePage.map(this::convertToCourseResponse);
+        Page<CourseResponse> mappedPage = coursePage.map(this::convertToCourseResponse);
+
+        return PageResponse.<CourseResponse>builder()
+                .items(mappedPage.getContent())
+                .page(mappedPage.getNumber())
+                .size(mappedPage.getSize())
+                .totalItems(mappedPage.getTotalElements())
+                .totalPages(mappedPage.getTotalPages())
+                .isLast(mappedPage.isLast())
+                .build();
     }
 
     public Course createCourse(CourseCreateRequest req) {
